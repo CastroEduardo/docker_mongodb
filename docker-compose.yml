@@ -5,12 +5,12 @@ services:
     # setup MongoDB cluster for production
     mongo-replica-setup:
         container_name: mongo-setup
-        image: 'mongo:4'
+        image: 'mongo:4.2'
         restart: on-failure
         networks:
             - netApplication
         volumes:
-        # - ./home/mongodb:/home/mongodb
+        #- ./home/mongodb:/home/mongodb
         - ./.docker/mongodb/scripts/mongosetup.sh:/scripts/mongosetup.sh
         # entrypoint: ["bash"]
         entrypoint: ["bash", "/scripts/mongosetup.sh" ]
@@ -23,13 +23,14 @@ services:
             - mongo1
             - mongo2
             - mongo3
-
     mongo1:
         hostname: 'mongo1'
         container_name: 'mongo1'
-        image: 'mongo:4'
+        image: 'mongo:4.2'
         restart: 'on-failure'
-        command: ["-f", "/etc/mongod.conf", "--port", "30001", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
+        #command: mongod --replSet rs0
+       # command: ["-f", "/etc/mongod.conf", "--port", "30001", "--replSet", "--keyFile", "/auth/file.key", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
+        command: ["-f", "/etc/mongod.conf","--port", "30001", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
         expose: 
             - 30001
         ports: 
@@ -38,7 +39,8 @@ services:
             - netApplication
         volumes:
             # - ./home/mongodb:/home/mongodb
-            - /Users/ecastro/docker-volumes/db/mongo1:/data/db
+            - ~/docker-volumes/db/mongo1:/data/db
+           # - ~/docker-volumes/mongodb1:/home/mongodb
             #- mongoLog1:/var/log/mongodb
             - ./.docker/mongodb/initdb.d/:/docker-entrypoint-initdb.d/
             - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
@@ -57,7 +59,7 @@ services:
     mongo2:
         hostname: 'mongo2'
         container_name: 'mongo2'
-        image: 'mongo:4'
+        image: 'mongo:4.2'
         command: ["-f", "/etc/mongod.conf","--port", "30002", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
         restart: 'on-failure'
         expose: 
@@ -67,7 +69,8 @@ services:
         networks: 
             - netApplication
         volumes:
-            - /Users/ecastro/docker-volumes/db/mongo2:/data/db
+            - ~/docker-volumes/db/mongo2:/data/db
+           # - ~/docker-volumes/mongodb2:/home/mongodb
             #- mongoLog2:/var/log/mongodb
             - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
             - ./.docker/mongodb/file.key:/auth/file.key
@@ -87,7 +90,7 @@ services:
     mongo3:
         hostname: 'mongo3'
         container_name: 'mongo3'
-        image: 'mongo:4'
+        image: 'mongo:4.2'
         command: ["-f", "/etc/mongod.conf", "--port", "30003", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
         restart: 'on-failure'
         expose: 
@@ -97,7 +100,8 @@ services:
         networks: 
             - netApplication
         volumes:
-            - /Users/ecastro/docker-volumes/db/mongo3:/data/db
+            - ~/docker-volumes/db/mongo3:/data/db
+           # - ~/docker-volumes/mongodb3:/home/mongodb
             #- mongoLog3:/var/log/mongodb
             - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
             - ./.docker/mongodb/file.key:/auth/file.key
