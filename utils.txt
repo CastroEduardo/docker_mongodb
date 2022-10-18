@@ -1,6 +1,6 @@
 mongo --host localhost:30001 -u castro  --authenticationDatabase admin
 
 
-openssl rand -base64 700 > file.key
+openssl rand -base64 756 > file.key
 chmod 400 file.key
 sudo chown 999:999 file.key
